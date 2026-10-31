@@ -1,23 +1,23 @@
-import { useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar,Platform } from "react-native";
+import { NavigationContainer, NavigationIndependentTree } from "@react-navigation/native";
+import { StatusBar, Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Routes from "../routes/"
 
 export default function RootLayout() {
-
-  useEffect(() => {
-
-    if(Platform.OS == "android" ){
-        StatusBar.setBackgroundColor("#353A40");
-    }
-
-  }, []);
+  const { top } = useSafeAreaInsets();
 
   return (
-      <NavigationContainer independent={true}>
-        <StatusBar backgroundColor="#353A40"/>
-        <Routes/>
-      </NavigationContainer>
+      <NavigationIndependentTree>
+        <NavigationContainer>
+          {/* Android edge-to-edge: a status bar é transparente, então pintamos a área dela */}
+          {Platform.OS == "android" && (
+            <View style={{ height: top, backgroundColor: "#353A40" }}>
+              <StatusBar barStyle="light-content"/>
+            </View>
+          )}
+          <Routes/>
+        </NavigationContainer>
+      </NavigationIndependentTree>
   );
 }
